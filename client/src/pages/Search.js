@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../components/Grid";
 import { List, ListItem } from "../components/List";
 import { Input, TextArea, FormBtn } from "../components/Form";
-import { REACT_APP_GOOGLE_API } from 'react-native-dotenv'
+import { Collapsable } from  "../components/Collapse"
 
 class Search extends Component {
   constructor(props) {
@@ -57,15 +57,14 @@ class Search extends Component {
 
   handleFormSubmit = event => {
     event.preventDefault();
-    console.log(process.env.REACT_APP_GOOGLE_API)
-    console.log(process.env.NODE_ENV)
+    // console.log(process.env.NODE_ENV)
     // Remove old books
     // this.setState({
     //   isLoaded: false,
     //   books: {}
     // })
     // Add new books
-    fetch(`https://www.googleapis.com/books/v1/volumes?q=flowers&key=${REACT_APP_GOOGLE_API}`)
+    fetch(`https://www.googleapis.com/books/v1/volumes?q=flowers&key=${process.env.REACT_APP_GOOGLE_API}`)
       .then(res => res.json())
       .then(
         result => {
@@ -133,13 +132,14 @@ class Search extends Component {
             <Jumbotron>
               <h1>Books On My List</h1>
             </Jumbotron>
-            {/* {this.state.books.length ? (
+            {this.state.books.length ? (
               <List>
                 {this.state.books.map(book => (
                   <ListItem key={book.id}>
                     <Link to={"/books/" + book.id}>
                       <strong>
-                        {book.title} by {book.author}
+                        {book.volumeInfo.title} by {book.volumeInfo.authors}
+                        {/* Description: {book.volumeInfo.description} */}
                       </strong>
                     </Link>
                     <DeleteBtn onClick={() => this.deleteBook(book.id)} />
@@ -148,7 +148,7 @@ class Search extends Component {
               </List>
             ) : (
               <h3>No Results to Display</h3>
-            )} */}
+            )}
           </Col>
         </Row>
       </Container>
