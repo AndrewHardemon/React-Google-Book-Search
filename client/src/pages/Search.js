@@ -1,17 +1,18 @@
 import React, { Component } from "react";
-import DeleteBtn from "../components/DeleteBtn";
+import { SaveBtn, ViewBtn } from "../components/Buttons";
 import Jumbotron from "../components/Jumbotron";
 import API from "../utils/API";
 import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../components/Grid";
 import { List, ListItem } from "../components/List";
 import { Input, TextArea, FormBtn } from "../components/Form";
-import { Collapsable } from  "../components/Collapse"
+import { UncontrolledCollapse, Button, CardBody, Card } from 'reactstrap';
 
 class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      open: false,
       error: null,
       isLoaded: false,
       books: [],
@@ -42,10 +43,19 @@ class Search extends Component {
       .catch(err => console.log(err));
   };
 
-  deleteBook = id => {
+  // deleteBook = id => {
+  //   API.deleteBook(id)
+  //     .then(res => this.loadBooks())
+  //     .catch(err => console.log(err));
+  // };
+
+  saveBook = id => {
     API.deleteBook(id)
       .then(res => this.loadBooks())
       .catch(err => console.log(err));
+  };
+  linkBook = link => {
+    window.location.href = link;
   };
 
   handleInputChange = event => {
@@ -57,12 +67,11 @@ class Search extends Component {
 
   handleFormSubmit = event => {
     event.preventDefault();
-    // console.log(process.env.NODE_ENV)
     // Remove old books
-    // this.setState({
-    //   isLoaded: false,
-    //   books: {}
-    // })
+    this.setState({
+      isLoaded: false,
+      books: {}
+    })
     // Add new books
     fetch(`https://www.googleapis.com/books/v1/volumes?q=flowers&key=${process.env.REACT_APP_GOOGLE_API}`)
       .then(res => res.json())
@@ -113,12 +122,6 @@ class Search extends Component {
                 onChange={this.handleInputChange}
                 name="author"
                 placeholder="Author (required)"
-              />
-              <TextArea
-                value={this.state.synopsis}
-                onChange={this.handleInputChange}
-                name="synopsis"
-                placeholder="Synopsis (Optional)"
               /> */}
               <FormBtn
                 disabled={!(this.state.title)}
@@ -136,13 +139,24 @@ class Search extends Component {
               <List>
                 {this.state.books.map(book => (
                   <ListItem key={book.id}>
-                    <Link to={"/books/" + book.id}>
+                    {/* <Link to={"/books/" + book.id}> */}
+                    <Button color="primary" id={"toggler"+book.id} style={{ marginBottom: '1rem' }}>
                       <strong>
                         {book.volumeInfo.title} by {book.volumeInfo.authors}
-                        {/* Description: {book.volumeInfo.description} */}
                       </strong>
-                    </Link>
-                    <DeleteBtn onClick={() => this.deleteBook(book.id)} />
+                    </Button>
+                    <UncontrolledCollapse toggler={"#toggler"+book.id}>
+                      <Card>
+                        <CardBody>
+                          <img src={book.volumeInfo.imageLinks.thumbnail}></img>
+                          <hr></hr>
+                          Description: {book.volumeInfo.description}
+                        </CardBody>
+                      </Card>
+                    </UncontrolledCollapse>
+                    {/* </Link> */}
+                    <SaveBtn onClick={() => this.saveBook(book.id)} />
+                    <ViewBtn onClick={() => this.linkBook(book.previewLink)} />
                   </ListItem>
                 ))}
               </List>

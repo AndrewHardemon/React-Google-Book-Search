@@ -1,23 +1,23 @@
-// import React, { useState } from 'react';
-// import { Collapse, Button, CardBody, Card } from 'reactstrap';
+import React from 'react';
+import { UncontrolledCollapse, Button, CardBody, Card } from 'reactstrap';
 
-// function Collapsable(children) {
-//   const [isOpen, setIsOpen] = useState(false);
+const Example = () => (
+  <div>
+    <Button color="primary" id="toggler" style={{ marginBottom: '1rem' }}>
+      Toggle
+    </Button>
+    <UncontrolledCollapse toggler="#toggler">
+      <Card>
+        <CardBody>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt magni, voluptas debitis
+          similique porro a molestias consequuntur earum odio officiis natus, amet hic, iste sed
+          dignissimos esse fuga! Minus, alias.
+        </CardBody>
+      </Card>
+    </UncontrolledCollapse>
+  </div>
+);
 
-//   const toggle = () => setIsOpen(!isOpen);
+export default Example;
 
-//   return (
-//     <div>
-//       <Button color="primary" onClick={toggle} style={{ marginBottom: '1rem' }}>Toggle</Button>
-//       <Collapse isOpen={isOpen}>
-//         <Card>
-//           <CardBody>
-//             {children}
-//           </CardBody>
-//         </Card>
-//       </Collapse>
-//     </div>
-//   );
-// }
 
-// export default Collapsable;
