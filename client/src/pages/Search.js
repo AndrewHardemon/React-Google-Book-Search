@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { SaveBtn, ViewBtn } from "../components/Buttons";
+import { SaveBtn, ViewBtn, DeleteBtn } from "../components/Buttons";
 import Jumbotron from "../components/Jumbotron";
 import API from "../utils/API";
 import { Link } from "react-router-dom";
@@ -16,20 +16,12 @@ class Search extends Component {
       error: null,
       isLoaded: false,
       books: [],
-      title: ""
-      // author: "",
-      // synopsis: ""
+      title: "",
+      saved: ""
+      // author: ""
     };
   }
   
-  // state = {
-  //  error: null,
-  //  isLoaded: false,
-  //   books: [],
-  //   title: "",
-  //   author: "",
-  //   synopsis: ""
-  // };
 
   componentDidMount() {
     this.loadBooks();
@@ -38,7 +30,7 @@ class Search extends Component {
   loadBooks = () => {
     API.getBooks()
       .then(res =>
-        this.setState({ books: res.data, title: "", author: "", synopsis: "" })
+        this.setState({ saved: res.data, title: ""})
       )
       .catch(err => console.log(err));
   };
@@ -50,16 +42,9 @@ class Search extends Component {
   // };
 
   saveBook = book => {
-    console.log(book)
-    // console.log(book.volumeInfo.title)
-    // console.log(book.volumeInfo.authors)
-    // console.log(book.id)
-    // console.log(book.volumeInfo.description)
-    // console.log(book.volumeInfo.imageLinks.thumbnail)
-    // console.log(book.volumeInfo.previewLink)
     API.saveBook({
       title: book.volumeInfo.title,
-      author: book.volumeInfo.authors,
+      author: book.volumeInfo.authors[0],
       id: book.id,
       description: book.volumeInfo.description,
       image: book.volumeInfo.imageLinks.thumbnail,
@@ -68,7 +53,7 @@ class Search extends Component {
     ).then(res => this.loadBooks())
       .catch(err => console.log(err));
   };
-  
+
   linkBook = link => {
     window.location.href = link;
   };
@@ -99,52 +84,57 @@ class Search extends Component {
           })
         }
       )
-      // title: result.items.volumeInfo.title,
-      // author: result.items.volumeInfo.authors,
-      // id: result.items.id,
-      // description: result.items.volumeInfo.subtitle,
-      // image: result.items.volumeInfo.imageLinks.thumbnail,
-      // link: result.items.selfLink
-    // if (this.state.title && this.state.author) {
-    //   API.saveBook({
-    //     title: this.state.title,
-    //     author: this.state.author,
-    //     synopsis: this.state.synopsis
-    //   })
-    //     .then(res => this.loadBooks())
-    //     .catch(err => console.log(err));
-    // }
-    console.log(this.state.books)
   };
 
   render() {
     return (
       <Container fluid>
         <Row>
-          <Col size="md-6">
-            <Jumbotron>
-              <h1>Find a Book!</h1>
-            </Jumbotron>
-            <form>
-              <Input
-                value={this.state.title}
-                onChange={this.handleInputChange}
-                name="title"
-                placeholder="Title (required)"
-              />
-              {/* <Input
-                value={this.state.author}
-                onChange={this.handleInputChange}
-                name="author"
-                placeholder="Author (required)"
-              /> */}
-              <FormBtn
-                disabled={!(this.state.title)}
-                onClick={this.handleFormSubmit}
-              >
-                Submit Book
-              </FormBtn>
-            </form>
+          <Col size="md-6 sm-12">
+            {/* <Row> */}
+              <Jumbotron>
+                <h1>Find a Book!</h1>
+              </Jumbotron>
+              <form>
+                <Input
+                  value={this.state.title}
+                  onChange={this.handleInputChange}
+                  name="title"
+                  placeholder="Title (required)"
+                />
+                {/* <Input
+                  value={this.state.author}
+                  onChange={this.handleInputChange}
+                  name="author"
+                  placeholder="Author (required)"
+                /> */}
+                <FormBtn
+                  disabled={!(this.state.title)}
+                  onClick={this.handleFormSubmit}
+                >
+                  Submit Book
+                </FormBtn>
+              </form>
+              <ListItem>
+                <Link to={"/saved"}>
+                  <strong>
+                    Go to Saved Books
+                  </strong>
+                </Link>
+              </ListItem>
+              {this.state.saved.length ? (
+                <List>
+                  {this.state.saved.map(book => (
+                    <ListItem key={book._id}>
+                      <strong>
+                        {book.title} by {book.author}
+                      </strong>
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <h3>No Results to Display</h3>
+              )}
           </Col>
           <Col size="md-6 sm-12">
             <Jumbotron>

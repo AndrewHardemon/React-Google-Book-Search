@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-// import DeleteBtn from "../components/Buttons";
+import { SaveBtn, ViewBtn, DeleteBtn } from "../components/Buttons";
 import Jumbotron from "../components/Jumbotron";
 import API from "../utils/API";
 import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../components/Grid";
 import { List, ListItem } from "../components/List";
 import { Input, TextArea, FormBtn } from "../components/Form";
+import { UncontrolledCollapse, Button, CardBody, Card } from 'reactstrap';
 
 class Saved extends Component {
   state = {
@@ -25,6 +26,10 @@ class Saved extends Component {
         this.setState({ books: res.data, title: "", author: "", synopsis: "" })
       )
       .catch(err => console.log(err));
+  };
+
+  linkBook = link => {
+    window.location.href = link;
   };
 
   deleteBook = id => {
@@ -57,51 +62,37 @@ class Saved extends Component {
     return (
       <Container fluid>
         <Row>
-          <Col size="md-6">
-            <Jumbotron>
-              <h1>What Books Should I Read?</h1>
-            </Jumbotron>
-            <form>
-              <Input
-                value={this.state.title}
-                onChange={this.handleInputChange}
-                name="title"
-                placeholder="Title (required)"
-              />
-              <Input
-                value={this.state.author}
-                onChange={this.handleInputChange}
-                name="author"
-                placeholder="Author (required)"
-              />
-              <TextArea
-                value={this.state.synopsis}
-                onChange={this.handleInputChange}
-                name="synopsis"
-                placeholder="Synopsis (Optional)"
-              />
-              <FormBtn
-                disabled={!(this.state.author && this.state.title)}
-                onClick={this.handleFormSubmit}
-              >
-                Submit Book
-              </FormBtn>
-            </form>
-          </Col>
-          <Col size="md-6 sm-12">
+          <Col size="md-12 sm-12">
             <Jumbotron>
               <h1>Books On My List</h1>
             </Jumbotron>
+            <ListItem>
+              <Link to={"/search"}>
+                <strong>
+                  Find more books
+                </strong>
+              </Link>
+            </ListItem>
             {this.state.books.length ? (
               <List>
                 {this.state.books.map(book => (
                   <ListItem key={book._id}>
-                    <Link to={"/books/" + book._id}>
+                    <Button color="primary" id={"toggler"+book._id} style={{ marginBottom: '1rem' }}>
                       <strong>
                         {book.title} by {book.author}
                       </strong>
-                    </Link>
-                    {/* <DeleteBtn onClick={() => this.deleteBook(book._id)} /> */}
+                    </Button>
+                    <UncontrolledCollapse toggler={"#toggler"+book._id}>
+                      <Card>
+                        <CardBody>
+                          <img src={book.image}></img>
+                          <hr></hr>
+                          Description: {book.description}
+                        </CardBody>
+                      </Card>
+                    </UncontrolledCollapse>
+                    <DeleteBtn onClick={() => this.deleteBook(book._id)} />
+                    <ViewBtn onClick={() => this.linkBook(book.link)} />
                   </ListItem>
                 ))}
               </List>

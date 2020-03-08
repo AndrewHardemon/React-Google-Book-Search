@@ -1,3 +1,8 @@
+.delete-btn {
+  float: right;
+  color: #e74944;
+}
+
 .view-btn {
   float: right;
   color: #4744e7;
