@@ -49,11 +49,26 @@ class Search extends Component {
   //     .catch(err => console.log(err));
   // };
 
-  saveBook = id => {
-    API.deleteBook(id)
-      .then(res => this.loadBooks())
+  saveBook = book => {
+    console.log(book)
+    // console.log(book.volumeInfo.title)
+    // console.log(book.volumeInfo.authors)
+    // console.log(book.id)
+    // console.log(book.volumeInfo.description)
+    // console.log(book.volumeInfo.imageLinks.thumbnail)
+    // console.log(book.volumeInfo.previewLink)
+    API.saveBook({
+      title: book.volumeInfo.title,
+      author: book.volumeInfo.authors,
+      id: book.id,
+      description: book.volumeInfo.description,
+      image: book.volumeInfo.imageLinks.thumbnail,
+      link: book.volumeInfo.previewLink
+    }
+    ).then(res => this.loadBooks())
       .catch(err => console.log(err));
   };
+  
   linkBook = link => {
     window.location.href = link;
   };
@@ -61,7 +76,7 @@ class Search extends Component {
   handleInputChange = event => {
     const { name, value } = event.target;
     this.setState({
-      [name]: value
+      [name]: value.replace(/ /g, '-')
     });
   };
 
@@ -73,7 +88,7 @@ class Search extends Component {
       books: {}
     })
     // Add new books
-    fetch(`https://www.googleapis.com/books/v1/volumes?q=flowers&key=${process.env.REACT_APP_GOOGLE_API}`)
+    fetch(`https://www.googleapis.com/books/v1/volumes?q=${this.state.title}&key=${process.env.REACT_APP_GOOGLE_API}`)
       .then(res => res.json())
       .then(
         result => {
@@ -155,8 +170,8 @@ class Search extends Component {
                       </Card>
                     </UncontrolledCollapse>
                     {/* </Link> */}
-                    <SaveBtn onClick={() => this.saveBook(book.id)} />
-                    <ViewBtn onClick={() => this.linkBook(book.previewLink)} />
+                    <SaveBtn onClick={() => this.saveBook(book)} />
+                    <ViewBtn onClick={() => this.linkBook(book.volumeInfo.previewLink)} />
                   </ListItem>
                 ))}
               </List>
