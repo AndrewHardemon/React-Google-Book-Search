@@ -74,7 +74,7 @@ class Search extends Component {
       books: {}
     })
     // Add new books
-    fetch(`https://www.googleapis.com/books/v1/volumes?q=${this.state.title}&key=${process.env.REACT_APP_GOOGLE_API}`)
+    fetch(`https://www.googleapis.com/books/v1/volumes?q=${this.state.title}&maxResults=20&key=${process.env.REACT_APP_GOOGLE_API}`)
       .then(res => res.json())
       .catch(err => console.log(err))
       .then(
