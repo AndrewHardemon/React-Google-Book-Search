@@ -15,6 +15,7 @@ class Search extends Component {
       open: false,
       error: null,
       isLoaded: false,
+      invalidEntry: false,
       books: [],
       title: "",
       saved: ""
@@ -55,7 +56,7 @@ class Search extends Component {
   };
 
   linkBook = link => {
-    window.location.href = link;
+    window.open(link);
   };
 
   handleInputChange = event => {
@@ -75,13 +76,24 @@ class Search extends Component {
     // Add new books
     fetch(`https://www.googleapis.com/books/v1/volumes?q=${this.state.title}&key=${process.env.REACT_APP_GOOGLE_API}`)
       .then(res => res.json())
+      .catch(err => console.log(err))
       .then(
         result => {
-          console.log(result)
-          this.setState({
-            isLoaded: true,
-            books: result.items
-          })
+          // If results exist
+          if(result.items){
+            console.log(result)
+            this.setState({
+              isLoaded: true,
+              books: result.items,
+              invalidEntry: false
+            })
+          // If no results
+          } else {
+            this.setState({
+              invalidEntry: true
+            })
+            console.log("invalid entry")
+          }
         }
       )
   };
@@ -168,6 +180,7 @@ class Search extends Component {
             ) : (
               <h3>No Results to Display</h3>
             )}
+            {this.state.invalidEntry && <h1>Invalid Entry</h1>}
           </Col>
         </Row>
       </Container>
